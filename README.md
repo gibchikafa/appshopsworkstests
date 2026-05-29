@@ -34,7 +34,7 @@ fastapi_app = apps.create_app(
     git_provider="GitHub",
     git_branch="main",
     entrypoint_command=(
-        'bash -lc "python -m pip install --no-cache-dir fastapi uvicorn && '
+        'bash -lc "python -m uv pip install --system --no-cache fastapi uvicorn && '
         'exec python -m uvicorn fastapiapp:app --host 0.0.0.0 --port \\"$APP_PORT\\""'
     ),
     app_port=8080,
@@ -64,7 +64,7 @@ flask_app = apps.create_app(
     git_provider="GitHub",
     git_branch="main",
     entrypoint_command=(
-        'bash -lc "python -m pip install --no-cache-dir flask && '
+        'bash -lc "python -m uv pip install --system --no-cache flask && '
         'exec python -m flask --app flaskapp run --host 0.0.0.0 --port \\"$APP_PORT\\""'
     ),
     app_port=8080,
@@ -120,7 +120,7 @@ gradio_app = apps.create_app(
     git_provider="GitHub",
     git_branch="main",
     entrypoint_command=(
-        'bash -lc "python -m pip install --no-cache-dir gradio && '
+        'bash -lc "python -m uv pip install --system --no-cache gradio && '
         'exec python gradioapp.py"'
     ),
     app_port=7860,
@@ -149,7 +149,7 @@ hops app create fastapifromgithub \
   --git-url https://github.com/gibchikafa/appshopsworkstests.git \
   --git-provider GitHub \
   --git-branch main \
-  --entrypoint-command 'bash -lc "python -m pip install --no-cache-dir fastapi uvicorn && exec python -m uvicorn fastapiapp:app --host 0.0.0.0 --port \"$APP_PORT\""' \
+  --entrypoint-command 'bash -lc "python -m uv pip install --system --no-cache fastapi uvicorn && exec python -m uvicorn fastapiapp:app --host 0.0.0.0 --port \"$APP_PORT\""' \
   --app-port 8080
 ```
 
@@ -159,7 +159,7 @@ hops app create flaskfromgithub \
   --git-url https://github.com/gibchikafa/appshopsworkstests.git \
   --git-provider GitHub \
   --git-branch main \
-  --entrypoint-command 'bash -lc "python -m pip install --no-cache-dir flask && exec python -m flask --app flaskapp run --host 0.0.0.0 --port \"$APP_PORT\""' \
+  --entrypoint-command 'bash -lc "python -m uv pip install --system --no-cache flask && exec python -m flask --app flaskapp run --host 0.0.0.0 --port \"$APP_PORT\""' \
   --app-port 8080
 ```
 
@@ -169,7 +169,7 @@ hops app create gradiofromgithub \
   --git-url https://github.com/gibchikafa/appshopsworkstests.git \
   --git-provider GitHub \
   --git-branch main \
-  --entrypoint-command 'bash -lc "python -m pip install --no-cache-dir gradio && exec python gradioapp.py"' \
+  --entrypoint-command 'bash -lc "python -m uv pip install --system --no-cache gradio && exec python gradioapp.py"' \
   --app-port 7860
 ```
 
