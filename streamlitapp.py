@@ -1,5 +1,6 @@
-# app.py
 import logging
+import os
+
 import streamlit as st
 import pandas as pd
 import numpy as np
@@ -32,6 +33,10 @@ logger.info("Streamlit app started")
 st.title("🚀 Simple Streamlit App")
 
 st.write("Hello! This is a simple Streamlit application.")
+
+st.subheader("Environment variables")
+st.write(f"LOAD_TEST_ACCOUNT_VAR={os.getenv('LOAD_TEST_ACCOUNT_VAR', '')}")
+st.write(f"LOAD_TEST_OVERRIDE_VAR={os.getenv('LOAD_TEST_OVERRIDE_VAR', '')}")
 
 # ---------------------------------------------------
 # Name Input
