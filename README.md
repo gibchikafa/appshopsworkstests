@@ -4,6 +4,7 @@ This repository contains small examples that can be deployed as Hopsworks apps f
 
 - `fastapiapp.py`
 - `flaskapp.py`
+- `gradioapp.py`
 - `streamlitapp.py`
 
 The apps are written so they work behind the Hopsworks app proxy. Git-backed apps are cloned on every app start.
@@ -98,10 +99,41 @@ streamlit_app.run()
 print(streamlit_app.app_url)
 ```
 
+```python
+import os
+
+import hopsworks
+
+
+project = hopsworks.login(
+    host="10.114.123.124",
+    port=443,
+    api_key_value=os.environ["HOPSWORKS_API_KEY"],
+)
+apps = project.get_app_api()
+
+
+gradio_app = apps.create_app(
+    name="gradiofromgithub",
+    app_kind="CUSTOM",
+    git_url="https://github.com/gibchikafa/appshopsworkstests.git",
+    git_provider="GitHub",
+    git_branch="main",
+    entrypoint_command=(
+        'bash -lc "python -m pip install --no-cache-dir gradio && '
+        'exec python gradioapp.py"'
+    ),
+    app_port=7860,
+)
+gradio_app.run()
+print(gradio_app.app_url)
+```
+
 ## Notes
 
 - `GitHub`, `GitLab`, and `BitBucket` are supported Git providers.
 - For custom apps, the app port is configured by Hopsworks and exposed through `APP_PORT`.
+- Gradio apps in this repository run on port `7860`.
 - For Streamlit Git apps, the entrypoint script must be a Python file relative to the repository root.
 - The repository path is cloned into the app container on every start, so changes in Git are picked up on the next restart/redeploy.
 
@@ -129,6 +161,16 @@ hops app create flaskfromgithub \
   --git-branch main \
   --entrypoint-command 'bash -lc "python -m pip install --no-cache-dir flask && exec python -m flask --app flaskapp run --host 0.0.0.0 --port \"$APP_PORT\""' \
   --app-port 8080
+```
+
+```bash
+hops app create gradiofromgithub \
+  --app-kind CUSTOM \
+  --git-url https://github.com/gibchikafa/appshopsworkstests.git \
+  --git-provider GitHub \
+  --git-branch main \
+  --entrypoint-command 'bash -lc "python -m pip install --no-cache-dir gradio && exec python gradioapp.py"' \
+  --app-port 7860
 ```
 
 ```bash
