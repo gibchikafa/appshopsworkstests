@@ -2,6 +2,7 @@
 
 This repository contains small examples that can be deployed as Hopsworks apps from Git:
 
+- `expressapp.js`
 - `fastapiapp.py`
 - `flaskapp.py`
 - `gradioapp.py`
@@ -12,6 +13,36 @@ The apps are written so they work behind the Hopsworks app proxy. Git-backed app
 ## Deploy with `hopsworks-api`
 
 Use the Python SDK to create and start an app from this repository.
+
+```python
+import os
+
+import hopsworks
+
+
+project = hopsworks.login(
+    host="10.114.123.124",
+    port=443,
+    api_key_value=os.environ["HOPSWORKS_API_KEY"],
+)
+apps = project.get_app_api()
+
+
+express_app = apps.create_app(
+    name="expressfromgithub",
+    app_kind="CUSTOM",
+    git_url="https://github.com/gibchikafa/appshopsworkstests.git",
+    git_provider="GitHub",
+    git_branch="main",
+    entrypoint_command=(
+        'bash -lc "npm install express && '
+        'exec node expressapp.js"'
+    ),
+    app_port=8080,
+)
+express_app.run()
+print(express_app.app_url)
+```
 
 ```python
 import os
@@ -142,6 +173,16 @@ If you already have credentials configured in Hopsworks for your Git provider, t
 ## Deploy with the `hops` CLI
 
 The same apps can be created from the command line:
+
+```bash
+hops app create expressfromgithub \
+  --app-kind CUSTOM \
+  --git-url https://github.com/gibchikafa/appshopsworkstests.git \
+  --git-provider GitHub \
+  --git-branch main \
+  --entrypoint-command 'bash -lc "npm install express && exec node expressapp.js"' \
+  --app-port 8080
+```
 
 ```bash
 hops app create fastapifromgithub \
