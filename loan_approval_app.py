@@ -82,12 +82,12 @@ with col1:
     no_dependents  = st.number_input("Number of Dependents", min_value=0, max_value=10, value=0, step=1)
 
 with col2:
-    income_annum   = st.number_input("Annual Income (₹)", min_value=100_000, max_value=100_000_000,
+    income_annum   = st.number_input("Annual Income ($)", min_value=100_000, max_value=100_000_000,
                                      value=5_000_000, step=100_000, format="%d")
     cibil_score    = st.slider("CIBIL Score", min_value=300, max_value=900, value=650, step=1)
 
 with col3:
-    loan_amount    = st.number_input("Loan Amount (₹)", min_value=100_000, max_value=500_000_000,
+    loan_amount    = st.number_input("Loan Amount ($)", min_value=100_000, max_value=500_000_000,
                                      value=10_000_000, step=100_000, format="%d")
     loan_term      = st.slider("Loan Term (months)", min_value=2, max_value=20, value=12, step=1)
 
@@ -95,16 +95,16 @@ st.subheader("Asset Details")
 
 acol1, acol2, acol3, acol4 = st.columns(4)
 with acol1:
-    residential = st.number_input("Residential Assets (₹)", min_value=0, max_value=500_000_000,
+    residential = st.number_input("Residential Assets ($)", min_value=0, max_value=500_000_000,
                                   value=5_000_000, step=100_000, format="%d")
 with acol2:
-    commercial  = st.number_input("Commercial Assets (₹)",  min_value=0, max_value=500_000_000,
+    commercial  = st.number_input("Commercial Assets ($)",  min_value=0, max_value=500_000_000,
                                   value=2_000_000, step=100_000, format="%d")
 with acol3:
-    luxury      = st.number_input("Luxury Assets (₹)",      min_value=0, max_value=500_000_000,
+    luxury      = st.number_input("Luxury Assets ($)",      min_value=0, max_value=500_000_000,
                                   value=3_000_000, step=100_000, format="%d")
 with acol4:
-    bank_assets = st.number_input("Bank Assets (₹)",        min_value=0, max_value=500_000_000,
+    bank_assets = st.number_input("Bank Assets ($)",        min_value=0, max_value=500_000_000,
                                   value=2_000_000, step=100_000, format="%d")
 
 # ── Quick metrics ─────────────────────────────────────────────────────────────
@@ -113,7 +113,7 @@ loan_to_income   = loan_amount / income_annum if income_annum else 0
 asset_to_loan    = total_assets / loan_amount if loan_amount else 0
 
 m1, m2, m3 = st.columns(3)
-m1.metric("Total Assets (₹)", f"{total_assets:,.0f}")
+m1.metric("Total Assets ($)", f"{total_assets:,.0f}")
 m2.metric("Loan-to-Income Ratio", f"{loan_to_income:.2f}x")
 m3.metric("Asset-to-Loan Ratio", f"{asset_to_loan:.2f}x")
 
