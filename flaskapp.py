@@ -1,12 +1,8 @@
-import os
-
 from flask import Blueprint, Flask, jsonify
 
 
-APP_BASE_URL_PATH = os.getenv("APP_BASE_URL_PATH", "").rstrip("/")
-
 app = Flask(__name__)
-bp = Blueprint("app", __name__, url_prefix=APP_BASE_URL_PATH or None)
+bp = Blueprint("app", __name__, url_prefix="/")
 
 
 @bp.get("/health")
@@ -16,8 +12,7 @@ def health():
 
 @bp.get("/")
 def home():
-    base = APP_BASE_URL_PATH or "/"
-    return f"""
+    return """
     <!doctype html>
     <html>
       <head>
@@ -26,7 +21,7 @@ def home():
       </head>
       <body>
         <h1>Flask on Hopsworks</h1>
-        <p>Base path: <code>{base}</code></p>
+        <p>Route prefix: <code>/</code></p>
       </body>
     </html>
     """

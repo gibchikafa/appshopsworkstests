@@ -1,22 +1,18 @@
-import os
-
 from fastapi import FastAPI
 from fastapi.responses import HTMLResponse
 
 
-APP_BASE_URL_PATH = os.getenv("APP_BASE_URL_PATH", "").rstrip("/")
 app = FastAPI(title="Hopsworks FastAPI App")
 
 
-@app.get(f"{APP_BASE_URL_PATH}/health")
+@app.get("/health")
 def health():
     return {"status": "ok"}
 
 
-@app.get(f"{APP_BASE_URL_PATH}/", response_class=HTMLResponse)
+@app.get("/", response_class=HTMLResponse)
 def home():
-    base = APP_BASE_URL_PATH or "/"
-    return f"""
+    return """
     <!doctype html>
     <html>
       <head>
@@ -25,7 +21,7 @@ def home():
       </head>
       <body>
         <h1>FastAPI on Hopsworks</h1>
-        <p>Base path: <code>{base}</code></p>
+        <p>Route prefix: <code>/</code></p>
       </body>
     </html>
     """

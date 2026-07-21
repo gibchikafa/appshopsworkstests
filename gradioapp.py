@@ -3,7 +3,6 @@ import os
 import gradio as gr
 
 
-APP_BASE_URL_PATH = os.getenv("APP_BASE_URL_PATH", "").rstrip("/")
 APP_PORT = int(os.getenv("APP_PORT", "7860"))
 ACCOUNT_VAR = os.getenv("LOAD_TEST_ACCOUNT_VAR", "")
 OVERRIDE_VAR = os.getenv("LOAD_TEST_OVERRIDE_VAR", "")
@@ -15,8 +14,8 @@ def respond(message: str) -> str:
 
 with gr.Blocks(title="Gradio on Hopsworks") as demo:
     gr.Markdown("# Gradio on Hopsworks")
-    gr.Markdown("This app is proxy-aware and works behind the Hopsworks app URL.")
-    gr.Markdown(f"Base path: `{APP_BASE_URL_PATH or '/'}`")
+    gr.Markdown("This app serves root-based routes behind Hopsworks app routing.")
+    gr.Markdown("Route prefix: `/`")
     gr.HTML(
         f"""
         <div>
@@ -34,5 +33,5 @@ with gr.Blocks(title="Gradio on Hopsworks") as demo:
 demo.launch(
     server_name="0.0.0.0",
     server_port=APP_PORT,
-    root_path=APP_BASE_URL_PATH or None,
+    root_path=None,
 )

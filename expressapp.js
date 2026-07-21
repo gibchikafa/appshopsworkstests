@@ -1,6 +1,5 @@
 const express = require("express");
 
-const APP_BASE_URL_PATH = (process.env.APP_BASE_URL_PATH || "").replace(/\/+$/, "");
 const PORT = process.env.APP_PORT || 8080;
 
 const app = express();
@@ -11,7 +10,6 @@ router.get("/health", (req, res) => {
 });
 
 router.get("/", (req, res) => {
-  const base = APP_BASE_URL_PATH || "/";
   res.send(`<!doctype html>
 <html>
   <head>
@@ -20,13 +18,13 @@ router.get("/", (req, res) => {
   </head>
   <body>
     <h1>Express on Hopsworks</h1>
-    <p>Base path: <code>${base}</code></p>
+    <p>Route prefix: <code>/</code></p>
   </body>
 </html>`);
 });
 
-app.use(APP_BASE_URL_PATH || "/", router);
+app.use("/", router);
 
 app.listen(PORT, "0.0.0.0", () => {
-  console.log(`Listening on http://0.0.0.0:${PORT}${APP_BASE_URL_PATH || ""}`);
+  console.log(`Listening on http://0.0.0.0:${PORT}`);
 });

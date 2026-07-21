@@ -8,7 +8,7 @@ This repository contains small examples that can be deployed as Hopsworks apps f
 - `gradioapp.py`
 - `streamlitapp.py`
 
-The apps are written so they work behind the Hopsworks app proxy. Git-backed apps are cloned on every app start.
+The apps are written for Hopsworks root routing with app base path `/`. Git-backed apps are cloned on every app start.
 
 ## Deploy with `hopsworks-api`
 
@@ -39,6 +39,7 @@ express_app = apps.create_app(
         'exec node expressapp.js"'
     ),
     app_port=8080,
+    app_base_path="/",
 )
 express_app.run()
 print(express_app.app_url)
@@ -69,6 +70,7 @@ fastapi_app = apps.create_app(
         'exec python -m uvicorn fastapiapp:app --host 0.0.0.0 --port \\"$APP_PORT\\""'
     ),
     app_port=8080,
+    app_base_path="/",
 )
 fastapi_app.run()
 print(fastapi_app.app_url)
@@ -99,6 +101,7 @@ flask_app = apps.create_app(
         'exec python -m flask --app flaskapp run --host 0.0.0.0 --port \\"$APP_PORT\\""'
     ),
     app_port=8080,
+    app_base_path="/",
 )
 flask_app.run()
 print(flask_app.app_url)
@@ -125,6 +128,7 @@ streamlit_app = apps.create_app(
     git_provider="GitHub",
     git_branch="main",
     entrypoint_script="streamlitapp.py",
+    app_base_path="/",
 )
 streamlit_app.run()
 print(streamlit_app.app_url)
@@ -155,6 +159,7 @@ gradio_app = apps.create_app(
         'exec python gradioapp.py"'
     ),
     app_port=7860,
+    app_base_path="/",
 )
 gradio_app.run()
 print(gradio_app.app_url)
@@ -181,7 +186,8 @@ hops app create expressfromgithub \
   --git-provider GitHub \
   --git-branch main \
   --entrypoint-command 'bash -lc "npm install express && exec node expressapp.js"' \
-  --app-port 8080
+  --app-port 8080 \
+  --app-base-path /
 ```
 
 ```bash
@@ -191,7 +197,8 @@ hops app create fastapifromgithub \
   --git-provider GitHub \
   --git-branch main \
   --entrypoint-command 'bash -lc "python -m uv pip install --system --no-cache fastapi uvicorn && exec python -m uvicorn fastapiapp:app --host 0.0.0.0 --port \"$APP_PORT\""' \
-  --app-port 8080
+  --app-port 8080 \
+  --app-base-path /
 ```
 
 ```bash
@@ -201,7 +208,8 @@ hops app create flaskfromgithub \
   --git-provider GitHub \
   --git-branch main \
   --entrypoint-command 'bash -lc "python -m uv pip install --system --no-cache flask && exec python -m flask --app flaskapp run --host 0.0.0.0 --port \"$APP_PORT\""' \
-  --app-port 8080
+  --app-port 8080 \
+  --app-base-path /
 ```
 
 ```bash
@@ -211,7 +219,8 @@ hops app create gradiofromgithub \
   --git-provider GitHub \
   --git-branch main \
   --entrypoint-command 'bash -lc "python -m uv pip install --system --no-cache gradio && exec python gradioapp.py"' \
-  --app-port 7860
+  --app-port 7860 \
+  --app-base-path /
 ```
 
 ```bash
@@ -220,7 +229,8 @@ hops app create streamlitfromgithub \
   --git-url https://github.com/gibchikafa/appshopsworkstests.git \
   --git-provider GitHub \
   --git-branch main \
-  --entrypoint-script streamlitapp.py
+  --entrypoint-script streamlitapp.py \
+  --app-base-path /
 ```
 
 Add `--start` if you want the CLI to start the app immediately after creation and wait for it to become serving.
