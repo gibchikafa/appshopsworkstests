@@ -66,7 +66,7 @@ fastapi_app = apps.create_app(
     git_provider="GitHub",
     git_branch="main",
     entrypoint_command=(
-        'bash -lc "python -m uv pip install --system --no-cache fastapi uvicorn && '
+        'bash -lc "python -m uv pip install --no-cache fastapi uvicorn && '
         'exec python -m uvicorn fastapiapp:app --host 0.0.0.0 --port \\"$APP_PORT\\""'
     ),
     app_port=8080,
@@ -97,7 +97,7 @@ flask_app = apps.create_app(
     git_provider="GitHub",
     git_branch="main",
     entrypoint_command=(
-        'bash -lc "python -m uv pip install --system --no-cache flask && '
+        'bash -lc "python -m uv pip install --no-cache flask && '
         'exec python -m flask --app flaskapp run --host 0.0.0.0 --port \\"$APP_PORT\\""'
     ),
     app_port=8080,
@@ -155,7 +155,7 @@ gradio_app = apps.create_app(
     git_provider="GitHub",
     git_branch="main",
     entrypoint_command=(
-        'bash -lc "python -m uv pip install --system --no-cache gradio && '
+        'bash -lc "python -m uv pip install --no-cache gradio && '
         'exec python gradioapp.py"'
     ),
     app_port=7860,
@@ -169,6 +169,7 @@ print(gradio_app.app_url)
 
 - `GitHub`, `GitLab`, and `BitBucket` are supported Git providers.
 - For custom apps, the app port is configured by Hopsworks and exposed through `APP_PORT`.
+- Install Python dependencies with plain `uv pip install` (no `--system`). The app container ships a Python virtualenv that is first on `PATH` and writable by the app user; `--system` bypasses it and targets the read-only OS interpreter, so the install fails with `Permission denied` and, even if it succeeded, `python` would not see the packages.
 - Gradio apps in this repository run on port `7860`.
 - For Streamlit Git apps, the entrypoint script must be a Python file relative to the repository root.
 - The repository path is cloned into the app container on every start, so changes in Git are picked up on the next restart/redeploy.
@@ -196,7 +197,7 @@ hops app create fastapifromgithub \
   --git-url https://github.com/gibchikafa/appshopsworkstests.git \
   --git-provider GitHub \
   --git-branch main \
-  --entrypoint-command 'bash -lc "python -m uv pip install --system --no-cache fastapi uvicorn && exec python -m uvicorn fastapiapp:app --host 0.0.0.0 --port \"$APP_PORT\""' \
+  --entrypoint-command 'bash -lc "python -m uv pip install --no-cache fastapi uvicorn && exec python -m uvicorn fastapiapp:app --host 0.0.0.0 --port \"$APP_PORT\""' \
   --app-port 8080 \
   --app-base-path /
 ```
@@ -207,7 +208,7 @@ hops app create flaskfromgithub \
   --git-url https://github.com/gibchikafa/appshopsworkstests.git \
   --git-provider GitHub \
   --git-branch main \
-  --entrypoint-command 'bash -lc "python -m uv pip install --system --no-cache flask && exec python -m flask --app flaskapp run --host 0.0.0.0 --port \"$APP_PORT\""' \
+  --entrypoint-command 'bash -lc "python -m uv pip install --no-cache flask && exec python -m flask --app flaskapp run --host 0.0.0.0 --port \"$APP_PORT\""' \
   --app-port 8080 \
   --app-base-path /
 ```
@@ -218,7 +219,7 @@ hops app create gradiofromgithub \
   --git-url https://github.com/gibchikafa/appshopsworkstests.git \
   --git-provider GitHub \
   --git-branch main \
-  --entrypoint-command 'bash -lc "python -m uv pip install --system --no-cache gradio && exec python gradioapp.py"' \
+  --entrypoint-command 'bash -lc "python -m uv pip install --no-cache gradio && exec python gradioapp.py"' \
   --app-port 7860 \
   --app-base-path /
 ```
