@@ -3,6 +3,7 @@ import pkg from "trino-client";
 
 const { Trino, BasicAuth } = pkg;
 const port = Number(process.env.APP_PORT || 8080);
+const appBasePath = (process.env.APP_BASE_URL_PATH || "").replace(/\/+$/, "");
 const user = process.env.TRINO_USER;
 const schema = process.env.TRINO_SCHEMA;
 const featureGroup = process.env.FEATURE_GROUP_NAME || "customers";
@@ -131,7 +132,12 @@ function sendJson(res, code, body) {
 }
 
 createServer(async (req, res) => {
-  const path = req.url.split("?")[0];
+  let path = req.url.split("?")[0];
+  // Compatibility routing preserves Hopsworks' public mount prefix. Root
+  // routing strips it. Accept both, including direct readiness probes.
+  if (appBasePath && (path === appBasePath || path.startsWith(appBasePath + "/"))) {
+    path = path.slice(appBasePath.length) || "/";
+  }
   if (req.method !== "GET") {
     res.setHeader("Allow", "GET");
     return sendJson(res, 405, { error: "Method not allowed" });

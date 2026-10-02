@@ -9,7 +9,7 @@ This repository contains small examples that can be deployed as Hopsworks apps f
 - `streamlitapp.py`
 - `trinoapp.mjs` — preview offline feature-group rows with the JavaScript Trino client
 
-The apps are written for Hopsworks root routing with app base path `/`. Git-backed apps are cloned on every app start.
+The apps are written for Hopsworks root routing with app base path `/`. The Trino example also supports compatibility prefix routing through `APP_BASE_URL_PATH`. Git-backed apps are cloned on every app start.
 
 ## Deploy with `hopsworks-api`
 
@@ -224,9 +224,11 @@ print(app.app_url)
 
 The Git branch must contain these example files before starting the app. The app
 environment needs Node.js, npm, and a Hopsworks SDK with `project.get_trino_api()`.
-Use **Root routing**, app base path `/`, and readiness path `/health` when creating
-the app through the UI. The startup command installs the npm dependency, so the
-pod needs npm registry access.
+Use app base path `/` and readiness path `/health` when creating the app through
+the UI. Both **Root routing** and **Compatibility prefix** work: the app accepts
+root requests and requests under the platform-injected `APP_BASE_URL_PATH`.
+The startup command installs the npm dependency, so the pod needs npm registry
+access.
 
 Configuration:
 
@@ -237,6 +239,7 @@ Configuration:
 | `TRINO_CATALOG` | `iceberg` | Catalog exposing the offline table |
 | `TRINO_SCHEMA` | Lowercased project name via launcher | Schema shown in Query Engine |
 | `APP_PORT` | `8080` | Injected by Hopsworks |
+| `APP_BASE_URL_PATH` | Unset | Public mount prefix injected by Hopsworks in compatibility mode |
 | `NODE_EXTRA_CA_CERTS` | `/tmp/ca_chain.pem` when present | PEM CA bundle for the Trino HTTPS certificate |
 
 For a standalone Trino endpoint, or to run Node.js directly without the launcher,
