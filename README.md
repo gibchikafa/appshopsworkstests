@@ -7,6 +7,7 @@ This repository contains small examples that can be deployed as Hopsworks apps f
 - `flaskapp.py`
 - `gradioapp.py`
 - `streamlitapp.py`
+- `trinoapp.mjs` — preview offline feature-group rows with the JavaScript Trino client
 
 The apps are written for Hopsworks root routing with app base path `/`. Git-backed apps are cloned on every app start.
 
@@ -164,6 +165,95 @@ gradio_app = apps.create_app(
 gradio_app.run()
 print(gradio_app.app_url)
 ```
+
+## JavaScript: read a feature group with Trino
+
+`trinoapp.mjs` serves a page with a **Load feature group** button and a results
+table. It runs the SQL query in Node.js with `trino-client`, follows every result
+page, and displays SQL and connection errors. `/api/features` returns the same
+data as JSON; `/health` checks app readiness without querying Trino.
+
+For an Iceberg feature group named `customers`, version `1`, in project
+`myproject`, the query is equivalent to:
+
+```sql
+SELECT * FROM iceberg.myproject.customers_1 LIMIT 100
+```
+
+Use the catalog, schema, and versioned table shown in your project's **Query
+Engine**. The default schema is the project name lowercased. Set `TRINO_SCHEMA`
+if your installation exposes a different schema, or you are reading an accessible
+feature group from another project. This reads offline data from a table exposed
+through Trino; it does not perform online feature lookups. The default `iceberg`
+catalog requires an Iceberg-backed feature group visible in that catalog.
+
+Hopsworks-managed Trino uses HTTPS and project-user credentials. The small
+`start_trinoapp.py` launcher uses the installed Hopsworks SDK to discover the
+coordinator and retrieve the current project user's Trino credentials. It passes
+them to Node.js through the process environment without printing them. All data
+queries and the web app are JavaScript.
+
+Create the app from a notebook or other authenticated Hopsworks SDK session:
+
+```python
+import hopsworks
+
+project = hopsworks.login()
+app = project.get_app_api().create_app(
+    name="trinofeaturegroup",
+    app_kind="CUSTOM",
+    git_url="https://github.com/gibchikafa/appshopsworkstests.git",
+    git_provider="GitHub",
+    git_branch="main",
+    entrypoint_command=(
+        'bash -lc "npm install --no-save --package-lock=false trino-client@0.2.9 && '
+        'exec python start_trinoapp.py"'
+    ),
+    app_port=8080,
+    app_base_path="/",
+    readiness_probe_path="/health",
+    env_vars={
+        "FEATURE_GROUP_NAME": "customers",  # Replace with your feature group.
+        "FEATURE_GROUP_VERSION": "1",
+        # "TRINO_SCHEMA": "other_schema",  # Optional override.
+    },
+)
+app.run()
+print(app.app_url)
+```
+
+The Git branch must contain these example files before starting the app. The app
+environment needs Node.js, npm, and a Hopsworks SDK with `project.get_trino_api()`.
+Use **Root routing**, app base path `/`, and readiness path `/health` when creating
+the app through the UI. The startup command installs the npm dependency, so the
+pod needs npm registry access.
+
+Configuration:
+
+| Variable | Default | Purpose |
+| --- | --- | --- |
+| `FEATURE_GROUP_NAME` | `customers` | Feature group name without the version suffix |
+| `FEATURE_GROUP_VERSION` | `1` | Feature group version; queries `<name>_<version>` |
+| `TRINO_CATALOG` | `iceberg` | Catalog exposing the offline table |
+| `TRINO_SCHEMA` | Lowercased project name via launcher | Schema shown in Query Engine |
+| `APP_PORT` | `8080` | Injected by Hopsworks |
+| `NODE_EXTRA_CA_CERTS` | `/tmp/ca_chain.pem` when present | PEM CA bundle for the Trino HTTPS certificate |
+
+For a standalone Trino endpoint, or to run Node.js directly without the launcher,
+install `trino-client@0.2.9` and set `TRINO_SERVER`, `TRINO_USER`, `TRINO_SCHEMA`,
+and the feature-group variables, then run `node trinoapp.mjs`. Also provide
+`TRINO_PASSWORD` when Basic authentication is required and `NODE_EXTRA_CA_CERTS`
+for a private CA. The launcher always selects Hopsworks' managed endpoint and
+credentials; direct Node.js mode uses your supplied settings. A Hopsworks API key
+is not the Trino password. The endpoint must expose the feature group's actual
+offline table; running a separate Trino server alone does not register it.
+
+The example pins the unscoped `trino-client@0.2.9` package to match the original
+`import pkg from "trino-client"` API.
+
+References: [Hopsworks Trino API](https://docs.hopsworks.ai/latest/python-api/hopsworks/core/trino_api/),
+[Query Engine](https://docs.hopsworks.ai/latest/user_guides/projects/trino/query_engine/),
+[Trino JavaScript client](https://github.com/trinodb/trino-js-client).
 
 ## Notes
 
