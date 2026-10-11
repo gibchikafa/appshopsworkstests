@@ -1,0 +1,38 @@
+{
+  "name": "hopsworks-app-examples",
+  "version": "1.0.0",
+  "description": "Small Node.js examples for Hopsworks apps. The repository is itself an npm package, so it can be installed into a Hopsworks environment from git.",
+  "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/gibchikafa/appshopsworkstests.git"
+  },
+  "type": "module",
+  "main": "lib/greeter.js",
+  "exports": {
+    ".": "./lib/greeter.js"
+  },
+  "bin": {
+    "hops-greet": "bin/hops-greet.js"
+  },
+  "files": [
+    "lib",
+    "bin"
+  ],
+  "workspaces": [
+    "packages/*"
+  ],
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "dayjs": "^1.11.0",
+    "lodash": "4.17.21"
+  },
+  "optionalDependencies": {
+    "fsevents": "^2.3.3"
+  },
+  "devDependencies": {
+    "typescript": "^5.4.0"
+  }
+}

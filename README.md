@@ -8,8 +8,69 @@ This repository contains small examples that can be deployed as Hopsworks apps f
 - `gradioapp.py`
 - `streamlitapp.py`
 - `trinoapp.mjs` — preview offline feature-group rows with the JavaScript Trino client
+- `greeterapp.mjs` — a Node.js app importing this repository's own package and `express` from the environment
 
 The apps are written for Hopsworks root routing with app base path `/`. The Trino example also supports compatibility prefix routing through `APP_BASE_URL_PATH`. Git-backed apps are cloned on every app start.
+
+## Install npm packages from this repository
+
+The repository is also an npm package (`hopsworks-app-examples`, see `package.json`): a `greet()` function in `lib/greeter.js` that depends on `lodash` and `dayjs`, a `hops-greet` CLI, and a workspace in `packages/greeter-cli`. That makes it a test case for the git import in the npm tab of a Python environment:
+
+- `package.json` at the root, with a pinned dependency (`lodash`), a range (`dayjs`), an optional one (`fsevents`) and a dev one (`typescript`), so each resolution path shows up.
+- `package-lock.json`, so the ranges resolve to what the lockfile records rather than to the newest release.
+- `packages/greeter-cli/package.json`, so the import shows a monorepo picker with two entries.
+- The root package has a name, so **Also install the repository itself as a package** is offered; it installs `hopsworks-app-examples` pinned to the commit, with the `hops-greet` CLI on `PATH`.
+
+In the UI: Project settings, Python, pick an environment, **Installed npm Libraries**, **Install npm package**, **Git repository** tab, paste `https://github.com/gibchikafa/appshopsworkstests` and press **Read repository**.
+
+With the SDK:
+
+```python
+import os
+
+import hopsworks
+
+
+project = hopsworks.login(
+    host="10.114.123.124",
+    port=443,
+    api_key_value=os.environ["HOPSWORKS_API_KEY"],
+)
+env = project.get_environment_api().get_environment("python-app-pipeline")
+
+# What the repository holds, resolved, without installing anything.
+info = env.inspect_npm_git("https://github.com/gibchikafa/appshopsworkstests", ref="main")
+print(info["commit"], info["rootPackageName"], [m["path"] for m in info["manifests"]])
+
+# The root package.json's dependencies, plus the repository itself as a package.
+env.install_npm_from_git(
+    "https://github.com/gibchikafa/appshopsworkstests",
+    ref="main",
+    manifests=["package.json"],
+    install_repository=True,
+)
+
+# express for the app below, in the same way.
+env.install_npm(["express@latest"])
+```
+
+After the build, `hops-greet Hopsworks` works on the environment's terminal, and `greeterapp.mjs` runs as a Node.js app that imports both packages from the environment:
+
+```python
+apps = project.get_app_api()
+greeter_app = apps.create_app(
+    name="greeterfromgithub",
+    app_kind="NODEJS",
+    environment="python-app-pipeline",
+    git_url="https://github.com/gibchikafa/appshopsworkstests.git",
+    git_provider="GitHub",
+    git_branch="main",
+    entrypoint_script="greeterapp.mjs",
+    app_port=8080,
+)
+greeter_app.run()
+print(greeter_app.app_url)
+```
 
 ## Deploy with `hopsworks-api`
 

@@ -1,0 +1,16 @@
+{
+  "name": "hopsworks-greeter-cli",
+  "version": "0.1.0",
+  "description": "A workspace of the examples monorepo, here so the git import has a second package.json to pick from. It uses the root package through a relative import, since npm does not link a workspace root into its workspaces.",
+  "license": "Apache-2.0",
+  "type": "module",
+  "private": true,
+  "main": "index.js",
+  "dependencies": {
+    "chalk": "^5.3.0",
+    "dayjs": "^1.11.0"
+  },
+  "devDependencies": {
+    "prettier": "^3.3.0"
+  }
+}
