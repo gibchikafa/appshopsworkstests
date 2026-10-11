@@ -14,6 +14,8 @@ The apps are written for Hopsworks root routing with app base path `/`. The Trin
 
 ## Install npm packages from this repository
 
+Available from Hopsworks 5.2: the git import of npm packages, `install_npm_from_git` and the Node.js app type below all need Hopsworks 5.2 or later.
+
 The repository is also an npm package (`hopsworks-app-examples`, see `package.json`): a `greet()` function in `src/greeter.js` that depends on `lodash` and `dayjs`, a `hops-greet` CLI, and a workspace in `packages/greeter-cli`. That makes it a test case for the git import in the npm tab of a Python environment:
 
 - `package.json` at the root, with a pinned dependency (`lodash`), a range (`dayjs`), an optional one (`fsevents`) and a dev one (`typescript`), so each resolution path shows up.
