@@ -14,7 +14,7 @@ The apps are written for Hopsworks root routing with app base path `/`. The Trin
 
 ## Install npm packages from this repository
 
-The repository is also an npm package (`hopsworks-app-examples`, see `package.json`): a `greet()` function in `lib/greeter.js` that depends on `lodash` and `dayjs`, a `hops-greet` CLI, and a workspace in `packages/greeter-cli`. That makes it a test case for the git import in the npm tab of a Python environment:
+The repository is also an npm package (`hopsworks-app-examples`, see `package.json`): a `greet()` function in `src/greeter.js` that depends on `lodash` and `dayjs`, a `hops-greet` CLI, and a workspace in `packages/greeter-cli`. That makes it a test case for the git import in the npm tab of a Python environment:
 
 - `package.json` at the root, with a pinned dependency (`lodash`), a range (`dayjs`), an optional one (`fsevents`) and a dev one (`typescript`), so each resolution path shows up.
 - `package-lock.json`, so the ranges resolve to what the lockfile records rather than to the newest release.

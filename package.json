@@ -8,15 +8,15 @@
     "url": "https://github.com/gibchikafa/appshopsworkstests.git"
   },
   "type": "module",
-  "main": "lib/greeter.js",
+  "main": "src/greeter.js",
   "exports": {
-    ".": "./lib/greeter.js"
+    ".": "./src/greeter.js"
   },
   "bin": {
     "hops-greet": "bin/hops-greet.js"
   },
   "files": [
-    "lib",
+    "src",
     "bin"
   ],
   "workspaces": [
