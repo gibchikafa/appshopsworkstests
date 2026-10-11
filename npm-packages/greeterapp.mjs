@@ -1,10 +1,10 @@
 import express from "express";
-import { greet, whereFrom } from "hopsworks-app-examples";
+import { greet, whereFrom } from "./src/greeter.js";
 
 // A Node.js app for Hopsworks: created with app type Node.js and this file as the app file, it
-// is started with `node greeterapp.mjs` and listens on PORT. Both imports resolve from the npm
-// packages installed in the environment: express from the registry, hopsworks-app-examples
-// from this repository installed as a package (see the README).
+// is started with `node npm-packages/greeterapp.mjs` and listens on PORT. The greeter comes from
+// the clone next to this file; express, and the lodash and dayjs the greeter needs, resolve from
+// the npm packages installed in the environment through the git import (see the README).
 const port = Number(process.env.PORT || process.env.APP_PORT || 8080);
 const host = process.env.HOST || "0.0.0.0";
 
